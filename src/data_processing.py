@@ -109,3 +109,56 @@ def aggregate_by_pincode(df_bio, df_demo, df_enrol):
         df_risk = pd.merge(df_risk, pincode_pop, on='pincode', how='left').fillna(0)
         
     return df_risk
+
+def add_geography_from_pincode(df):
+    """
+    Adds state and district columns based on pincode prefixes.
+    Uses first 3 digits of pincode to map to regions.
+    """
+    if 'pincode' not in df.columns:
+        return df
+    
+    # Convert pincode to string and extract first 3 digits
+    df['pincode_str'] = df['pincode'].astype(str).str.zfill(6)
+    df['pincode_prefix'] = df['pincode_str'].str[:3]
+    
+    # Pincode prefix to state/district mapping (simplified for major regions)
+    # Format: prefix -> (state, district_pattern)
+    pincode_map = {
+        '110': ('Delhi', 'Central Delhi'),
+        '131': ('Haryana', 'Sonipat'),
+        '132': ('Haryana', 'Karnal'),
+        '133': ('Haryana', 'Ambala'),
+        '134': ('Haryana', 'Panchkula'),
+        '135': ('Haryana', 'Yamunanagar'),
+        '136': ('Haryana', 'Kurukshetra'),
+        '262': ('Uttarakhand', 'Nainital'),
+        '263': ('Uttarakhand', 'Almora'),
+        '394': ('Gujarat', 'Surat'),
+        '395': ('Gujarat', 'Surat'),
+        '396': ('Gujarat', 'Valsad'),
+        '400': ('Maharashtra', 'Mumbai'),
+        '524': ('Andhra Pradesh', 'Nellore'),
+        '530': ('Andhra Pradesh', 'Visakhapatnam'),
+        '531': ('Andhra Pradesh', 'Visakhapatnam'),
+        '600': ('Tamil Nadu', 'Chennai'),
+        '625': ('Tamil Nadu', 'Madurai'),
+        '678': ('Kerala', 'Palakkad'),
+        '756': ('Odisha', 'Baleswar'),
+        '786': ('Assam', 'Dhubri'),
+        '787': ('Assam', 'North Lakhimpur'),
+        '788': ('Assam', 'Jorhat'),
+        '790': ('Meghalaya', 'Shillong'),
+        '791': ('Meghalaya', 'Tura'),
+        '792': ('Meghalaya', 'Jowai'),
+        '793': ('Mizoram', 'Aizawl'),
+    }
+    
+    # Apply mapping
+    df['state'] = df['pincode_prefix'].map(lambda x: pincode_map.get(x, ('Unknown State', 'Unknown District'))[0])
+    df['district'] = df['pincode_prefix'].map(lambda x: pincode_map.get(x, ('Unknown State', 'Unknown District'))[1])
+    
+    # Clean up temporary columns
+    df = df.drop(columns=['pincode_str', 'pincode_prefix'])
+    
+    return df

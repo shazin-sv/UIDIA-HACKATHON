@@ -58,6 +58,9 @@ def generate_processed_data():
     # Calculate IHS
     df_risk = ihs_scoring.calculate_pincode_ihs(df_risk)
     
+    # Add geographic columns (state/district) from pincode
+    df_risk = data_processing.add_geography_from_pincode(df_risk)
+    
     # Save Processed
     print(f"Saving to {processed_path}...")
     df_risk.to_csv(os.path.join(processed_path, 'ihs_features_population.csv'), index=False)
