@@ -42,12 +42,6 @@ def load_data():
     if 'total_update_load' not in df.columns and 'mbu_rate' in df.columns:
         # Approximate load if missing
         df['total_update_load'] = df['bio_age_5_17'] + df['demo_age_5_17']
-    
-    # Add dummy state/district if missing (synthetic data might not have them)
-    if 'state' not in df.columns:
-        df['state'] = 'State A' # Placeholder
-    if 'district' not in df.columns:
-        df['district'] = 'District X' # Placeholder
         
     return df
 
@@ -74,12 +68,6 @@ def load_demand_data():
         except:
             pass
             
-    # Add dummy state/district if missing (synthetic data might not have them)
-    if 'state' not in df.columns:
-        df['state'] = 'State A' # Placeholder
-    if 'district' not in df.columns:
-        df['district'] = 'District X' # Placeholder
-        
     return df
 
 def show_dashboard():

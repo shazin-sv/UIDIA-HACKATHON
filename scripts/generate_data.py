@@ -73,6 +73,8 @@ def generate_processed_data():
         if 'bio_age_5_17' in df_bio.columns:
             df_monthly = df_bio.groupby(['month', 'pincode'])['bio_age_5_17'].sum().reset_index()
             df_monthly.rename(columns={'bio_age_5_17': 'mbu_demand'}, inplace=True)
+            # Add geography from pincode
+            df_monthly = data_processing.add_geography_from_pincode(df_monthly)
             df_monthly.to_csv(os.path.join(processed_path, 'biometric_mbu_aggregated.csv'), index=False)
     elif 'df_monthly' in locals():
          df_monthly.to_csv(os.path.join(processed_path, 'biometric_mbu_aggregated.csv'), index=False)
